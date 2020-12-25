@@ -1,6 +1,4 @@
 import sys
-import time
-import concurrent.futures
 import tkinter as tk
 from tkinter.font import Font
 from lyricsgenius import Genius
@@ -9,29 +7,28 @@ from spotipy.oauth2 import SpotifyOAuth
 
 # --rzqdJGFcVjzUa4sLjvL3ADoT9Bj9bvWFWQCiTut7m41yIH8QVdBetvyDnGWe3n
 
-
-
-
 class ApiData():
-    def __init__(self,tok1):
-        self.genius_token = tok1
-        self.gen = Genius(self.genius_token)
-        self.spotify_ID = "77000a15d6134f888344df26f3880982"
-        self.spotify_secret = "ade88a234dc248c3bcaad91fe63e765b"
+    def __init__(self,genius_auth):
+        self.__genius_token = genius_auth
+        self.gen = Genius(self.__genius_token)
+        self.__spotify_ID = "77000a15d6134f888344df26f3880982"
+        self.__spotify_secret = "ade88a234dc248c3bcaad91fe63e765b"
         self.user = "spotify:user:irv.in"
-        self.sp = spotipy.Spotify(auth_manager = SpotifyOAuth(client_id = self.spotify_ID,
-                                client_secret = self.spotify_secret,
+        self.sp = spotipy.Spotify(auth_manager = SpotifyOAuth(client_id = self.__spotify_ID,
+                                client_secret = self.__spotify_secret,
                                 redirect_uri = "https://www.google.com" ,
                                 scope = "user-read-currently-playing",
                                 username = self.user))
+
+        #Collects track data from Spotify API and uses that to get lyrics from Genius API
         try:
             self.__current_track_data = self.sp.current_user_playing_track()
             self.__current_track_name = self.__current_track_data["item"]["name"]
             self.__current_track_artist = self.__current_track_data["item"]["artists"][0]["name"]
             __current_track_lyricdata= self.gen.search_song(self.__current_track_name,self.__current_track_artist)
             self.__current_track_lyrics = __current_track_lyricdata.lyrics
-        except Exception as e:
-            raise("No song playing.")
+        except:
+            print("No song playing.")
 
     def update_song(self):
         self.__current_track_data = self.sp.current_user_playing_track()
@@ -39,7 +36,6 @@ class ApiData():
         self.__current_track_artist = self.__current_track_data["item"]["artists"][0]["name"]
         __current_track_lyricdata= self.gen.search_song(self.__current_track_name,self.__current_track_artist)
         self.__current_track_lyrics = __current_track_lyricdata.lyrics
-
 
     @property #testing only
     def track_data(self):
@@ -55,8 +51,6 @@ class ApiData():
     def track_lyrics(self):
         return self.__current_track_lyrics
 
-
-
 class gui():
 
     def __init__(self):
@@ -67,7 +61,6 @@ class gui():
 
         headFont = Font(family = "Helvetica", size = 18)
         bodyFont = Font(family = "Helvetica", size = 12)
-
 
         self.track_label = tk.Label(self.root, text = "Currently playing: '" + self.test.track_name + "' by "+ self.test.track_artist, font = headFont)
         self.track_label.pack()
@@ -95,11 +88,8 @@ class gui():
     def run_loop(self):
         self.root.mainloop()
 
-
-
 def main():
     window = gui()
-
     window.run_loop()
 
 main()
