@@ -2,15 +2,18 @@ import spotipy
 from lyricsgenius import Genius
 from spotipy.oauth2 import SpotifyOAuth
 
-# --rzqdJGFcVjzUa4sLjvL3ADoT9Bj9bvWFWQCiTut7m41yIH8QVdBetvyDnGWe3n "Genius authorization code got from website"
-
 class ApiData():
-    def __init__(self,genius_auth):
+    def __init__(self,path):
+        with open(path) as f: #Authorization info must be stored properly in separate lines
+            file = f.read()
+            auth_info=file.splitlines()
+            genius_auth = auth_info[0]
+            self.__spotify_ID = auth_info[1]
+            self.__spotify_secret = auth_info[2]
+            self.user = auth_info[3]
+
         self.__genius_token = genius_auth
         self.gen = Genius(self.__genius_token)
-        self.__spotify_ID = "77000a15d6134f888344df26f3880982" # Generated from Spotify Api
-        self.__spotify_secret = "ade88a234dc248c3bcaad91fe63e765b" # Generated from Spotify Api
-        self.user = "spotify:user:irv.in"
         self.sp = spotipy.Spotify(auth_manager = SpotifyOAuth(client_id = self.__spotify_ID,
                                 client_secret = self.__spotify_secret,
                                 redirect_uri = "https://www.google.com" ,

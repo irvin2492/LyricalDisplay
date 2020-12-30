@@ -1,8 +1,8 @@
 import sys
 import requests
+from auth import *
 import tkinter as tk
 from io import BytesIO
-from auth import *
 from tkinter.font import Font
 from PIL import Image, ImageTk
 
@@ -11,14 +11,14 @@ class gui():
         self.root = tk.Tk()
         self.root.geometry("750x500")
         self.root.title("LyricalDisplay")
-        self.data = ApiData('--rzqdJGFcVjzUa4sLjvL3ADoT9Bj9bvWFWQCiTut7m41yIH8QVdBetvyDnGWe3n')
+        self.data = ApiData("/Users/irvin/Desktop/LyricalDisplayProj/auth_info.txt") # TODO: fix this using path module
 
         launch_font = Font(family = "Futura", size = 24)
         self.head_font = Font(family = "Futura", size = 18)
         self.body_font = Font(family = "Futura", size = 12)
 
         #Creates launch page
-        self.welcome_label = tk.Label(self.root, text = "Welcome to your Lyrical Display",font = launch_font)
+        self.welcome_label = tk.Label(self.root, text = "Welcome to your Lyrical Display", font = launch_font)
         self.welcome_label.place(relx=0.5, rely=0.4, anchor = 'center')
         self.launch_button = tk.Button(self.root, text = "Show Lyrics", command = self.open_lyrics, font = launch_font, fg = 'blue')
         self.launch_button.place(relx=0.5, rely=0.5, anchor = 'center')
@@ -64,7 +64,7 @@ class gui():
             self.lyrics_box = tk.Text(self.right_frame, height = 30, width = 50, font = self.body_font)
             self.lyrics_box.config(state = 'disabled')
         else:
-            self.lyrics_box = tk.Text(self.right_frame, height = 30, width = 50, font = self.body_font, bg ='#fffed4',relief = 'ridge')
+            self.lyrics_box = tk.Text(self.right_frame, height = 30, width = 50, font = self.body_font, bg ='#fffed4')
             self.lyrics_box.insert(tk.END,self.data.track_lyrics)
             self.lyrics_box.config(state = 'disabled')
         self.lyrics_box.pack()
@@ -88,7 +88,7 @@ class gui():
             self.track_label.config(text = "Currently playing: '" + self.data.track_name + "' by "+ self.data.track_artist)
             self.lyrics_box.delete(1.0,tk.END)
             self.lyrics_box.insert(tk.END,self.data.track_lyrics) #Inserts new lyrics at the end of the lyrics text box
-            self.lyrics_box.config(state = 'disabled', bg ='#fffed4',relief = 'ridge')
+            self.lyrics_box.config(state = 'disabled', bg ='#fffed4')
 
             self.track_image_display.config(image = self.track_image,relief = 'groove')
             self.track_image_display.image = self.track_image
